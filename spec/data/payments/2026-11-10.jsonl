@@ -1,0 +1,3 @@
+{"payment_id": "P1", "order_id": "O1001", "amount": "120.50", "currency": "gbp", "method": "card", "paid_at": "2026-02-01T10:05:00Z", "updated_at": "2026-02-01T10:05:00Z", "op": "I"}
+{"payment_id": "P2", "order_id": "O1003", "amount": "45.25", "currency": "gbp", "method": "wallet", "paid_at": "2026-02-03T09:05:00Z", "updated_at": "2026-02-03T09:05:00Z", "op": "I"}
+{"payment_id": "P3", "order_id": "O1004", "amount": "300.00", "currency": "eur", "method": "bank_transfer", "paid_at": "2026-02-04T09:00:00Z", "updated_at": "2026-02-04T09:00:00Z", "op": "I"}

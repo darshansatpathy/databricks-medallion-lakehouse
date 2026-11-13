@@ -1,0 +1,51 @@
+[table]
+name = "payments"
+layer = "bronze"
+owner = "finance-data"
+domain = "finance"
+classification = "internal"
+comment = "Raw payment change events as received from the payment processor export, all values as text."
+
+[source]
+format = "json"
+path = "payments"
+
+[[columns]]
+name = "payment_id"
+type = "string"
+comment = "Payment identifier"
+
+[[columns]]
+name = "order_id"
+type = "string"
+comment = "Order the payment settles"
+
+[[columns]]
+name = "amount"
+type = "string"
+comment = "Payment amount as text"
+
+[[columns]]
+name = "currency"
+type = "string"
+comment = "ISO currency code"
+
+[[columns]]
+name = "method"
+type = "string"
+comment = "Payment method"
+
+[[columns]]
+name = "paid_at"
+type = "string"
+comment = "When the payment settled"
+
+[[columns]]
+name = "updated_at"
+type = "string"
+comment = "When the source row last changed"
+
+[[columns]]
+name = "op"
+type = "string"
+comment = "Change operation: I, U or D"

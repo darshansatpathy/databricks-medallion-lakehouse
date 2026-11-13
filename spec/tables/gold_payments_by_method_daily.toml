@@ -1,0 +1,37 @@
+[table]
+name = "payments_by_method_daily"
+layer = "gold"
+owner = "finance-data"
+domain = "finance"
+classification = "internal"
+comment = "Settled payment count and value by day and payment method, for treasury and reconciliation."
+
+[query]
+from = "silver.payments"
+alias = "p"
+
+[[columns]]
+name = "paid_date"
+type = "date"
+expr = "to_date(p.paid_at)"
+group = true
+comment = "Day the payment settled (UTC)"
+
+[[columns]]
+name = "method"
+type = "string"
+expr = "p.method"
+group = true
+comment = "Payment method"
+
+[[columns]]
+name = "payments_count"
+type = "bigint"
+expr = "count(*)"
+comment = "Settled payments"
+
+[[columns]]
+name = "paid_amount"
+type = "decimal(18,2)"
+expr = "sum(p.amount)"
+comment = "Sum of settled payment amounts"

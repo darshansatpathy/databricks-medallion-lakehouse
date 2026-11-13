@@ -1,0 +1,1 @@
+{"payment_id": "P3", "order_id": "O1004", "amount": "300.00", "currency": "eur", "method": "bank_transfer", "paid_at": "2026-02-04T09:00:00Z", "updated_at": "2026-02-10T09:00:00Z", "op": "D"}

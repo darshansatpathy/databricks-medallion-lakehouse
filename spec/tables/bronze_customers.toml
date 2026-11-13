@@ -1,0 +1,50 @@
+[table]
+name = "customers"
+layer = "bronze"
+owner = "customer-data"
+domain = "customer"
+classification = "confidential"
+comment = "Raw customer change events as received from the CRM, all values as text. Contains personal data."
+
+[source]
+format = "json"
+path = "customers"
+
+[[columns]]
+name = "customer_id"
+type = "string"
+comment = "Customer identifier"
+
+[[columns]]
+name = "email"
+type = "string"
+comment = "Customer email address"
+pii = true
+mask = "email"
+
+[[columns]]
+name = "full_name"
+type = "string"
+comment = "Customer full name"
+pii = true
+mask = "redact"
+
+[[columns]]
+name = "country"
+type = "string"
+comment = "Country code"
+
+[[columns]]
+name = "segment"
+type = "string"
+comment = "Marketing segment"
+
+[[columns]]
+name = "updated_at"
+type = "string"
+comment = "When the source row last changed"
+
+[[columns]]
+name = "op"
+type = "string"
+comment = "Change operation: I, U or D"

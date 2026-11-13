@@ -1,0 +1,5 @@
+{"customer_id": "C001", "email": "ada.lovelace@example.com", "full_name": "Ada Lovelace", "country": "gb", "segment": "premium", "updated_at": "2026-03-01T12:00:00Z", "op": "U"}
+{"customer_id": "C002", "email": "grace@example.com", "full_name": "Grace Hopper", "country": "us", "segment": "standard", "updated_at": "2026-03-02T09:00:00Z", "op": "U"}
+{"customer_id": "C003", "email": "linus@example.org", "full_name": "Linus T", "country": "fi", "segment": "standard", "updated_at": "2026-04-01T08:00:00Z", "op": "D"}
+{"customer_id": " C004 ", "email": " DENNIS@Example.com ", "full_name": " Dennis R ", "country": "us", "segment": "Premium", "updated_at": "2026-03-05T10:00:00Z", "op": "I"}
+{"customer_id": null, "email": "ghost@example.com", "full_name": "No Id", "country": "us", "segment": "standard", "updated_at": "2026-03-06T10:00:00Z", "op": "I"}

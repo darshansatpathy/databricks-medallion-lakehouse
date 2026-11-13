@@ -1,0 +1,45 @@
+name: Validate bundle against a workspace
+
+# Manual. Needs a Databricks workspace, a service principal with a GitHub Actions
+# federation policy, and the repository variables below. Not run by CI.
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Bundle target to validate
+        type: choice
+        options: [dev, staging, prod]
+        default: dev
+      warehouse_id:
+        description: SQL warehouse ID for the governance task
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  validate:
+    name: Validate (${{ inputs.target }})
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.target }}
+    env:
+      DATABRICKS_AUTH_TYPE: github-oidc
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Generated files are current
+        run: |
+          pip install -e .
+          medallion generate --check
+      # Pin this to a release tag or commit once you have chosen one; Databricks documents @main.
+      - uses: databricks/setup-cli@main
+      - name: Validate
+        working-directory: bundle
+        run: databricks bundle validate -t "${{ inputs.target }}" --var "warehouse_id=${{ inputs.warehouse_id }}"

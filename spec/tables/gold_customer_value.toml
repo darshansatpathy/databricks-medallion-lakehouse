@@ -1,0 +1,57 @@
+[table]
+name = "customer_value"
+layer = "gold"
+owner = "customer-data"
+domain = "customer"
+classification = "confidential"
+comment = "Lifetime value and order history per current customer. Email is masked for readers outside the privileged group."
+
+[query]
+from = "silver.orders"
+alias = "o"
+where = "o.status = 'completed'"
+
+[[query.joins]]
+table = "silver.customers"
+alias = "c"
+kind = "inner"
+on = "o.customer_id = c.customer_id AND c.__END_AT IS NULL"
+
+[[columns]]
+name = "customer_id"
+type = "string"
+expr = "o.customer_id"
+group = true
+comment = "Customer identifier"
+
+[[columns]]
+name = "email"
+type = "string"
+expr = "max(c.email)"
+pii = true
+mask = "email"
+comment = "Current customer email address"
+
+[[columns]]
+name = "orders_count"
+type = "bigint"
+expr = "count(*)"
+comment = "Completed orders"
+
+[[columns]]
+name = "lifetime_value"
+type = "decimal(18,2)"
+expr = "sum(o.amount)"
+comment = "Sum of completed order totals"
+
+[[columns]]
+name = "first_order_date"
+type = "date"
+expr = "min(to_date(o.order_ts))"
+comment = "Date of the first completed order"
+
+[[columns]]
+name = "last_order_date"
+type = "date"
+expr = "max(to_date(o.order_ts))"
+comment = "Date of the latest completed order"

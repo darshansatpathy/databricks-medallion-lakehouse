@@ -1,0 +1,108 @@
+[table]
+name = "orders"
+layer = "silver"
+from = "bronze.orders"
+owner = "sales-data"
+domain = "sales"
+classification = "internal"
+comment = "Current state of each order: typed, validated and deduplicated by key. Bad rows go to the quarantine table."
+
+[cdc]
+keys = ["order_id"]
+sequence_by = "updated_at"
+scd = 1
+delete_when = "op = 'D'"
+drop_columns = ["op"]
+
+[[columns]]
+name = "order_id"
+type = "string"
+expr = "trim(order_id)"
+comment = "Order identifier"
+
+[[columns]]
+name = "customer_id"
+type = "string"
+expr = "trim(customer_id)"
+comment = "Customer identifier"
+
+[[columns]]
+name = "status"
+type = "string"
+expr = "lower(trim(status))"
+comment = "Order status, lower case"
+
+[[columns]]
+name = "amount"
+type = "decimal(18,2)"
+expr = "trim(amount)"
+comment = "Order total"
+
+[[columns]]
+name = "currency"
+type = "string"
+expr = "upper(trim(currency))"
+comment = "ISO currency code, upper case"
+
+[[columns]]
+name = "order_ts"
+type = "timestamp"
+expr = "trim(order_ts)"
+comment = "When the order was placed (UTC)"
+
+[[columns]]
+name = "updated_at"
+type = "timestamp"
+expr = "trim(updated_at)"
+comment = "Sequence column: when the source row last changed (UTC)"
+
+[[columns]]
+name = "op"
+type = "string"
+expr = "upper(trim(op))"
+comment = "Change operation, used for deletes only"
+
+[[expectations]]
+name = "order_id_present"
+rule = "order_id IS NOT NULL AND length(order_id) > 0"
+action = "drop"
+
+[[expectations]]
+name = "customer_id_present"
+rule = "customer_id IS NOT NULL AND length(customer_id) > 0"
+action = "drop"
+
+[[expectations]]
+name = "amount_valid"
+rule = "amount IS NOT NULL AND amount >= 0"
+action = "drop"
+
+[[expectations]]
+name = "order_ts_valid"
+rule = "order_ts IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "updated_at_valid"
+rule = "updated_at IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "currency_is_iso_length"
+rule = "length(currency) = 3"
+action = "warn"
+
+[[expectations]]
+name = "status_known"
+rule = "status IN ('new', 'completed', 'cancelled', 'refunded')"
+action = "warn"
+
+[[expectations]]
+name = "op_present"
+rule = "op IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "op_known"
+rule = "op IS NULL OR op IN ('I', 'U', 'D')"
+action = "fail"

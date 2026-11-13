@@ -1,0 +1,51 @@
+[table]
+name = "orders"
+layer = "bronze"
+owner = "sales-data"
+domain = "sales"
+classification = "internal"
+comment = "Raw order change events exactly as received from the order system, all values as text."
+
+[source]
+format = "json"
+path = "orders"
+
+[[columns]]
+name = "order_id"
+type = "string"
+comment = "Order identifier"
+
+[[columns]]
+name = "customer_id"
+type = "string"
+comment = "Customer identifier"
+
+[[columns]]
+name = "status"
+type = "string"
+comment = "Order status"
+
+[[columns]]
+name = "amount"
+type = "string"
+comment = "Order total as text"
+
+[[columns]]
+name = "currency"
+type = "string"
+comment = "ISO currency code"
+
+[[columns]]
+name = "order_ts"
+type = "string"
+comment = "When the order was placed"
+
+[[columns]]
+name = "updated_at"
+type = "string"
+comment = "When the source row last changed"
+
+[[columns]]
+name = "op"
+type = "string"
+comment = "Change operation: I, U or D"

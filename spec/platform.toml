@@ -1,0 +1,118 @@
+# Platform specification: environments, ownership and access.
+# Group names are examples; map them to the groups synced from your identity provider.
+
+[platform]
+name = "retail-lakehouse"
+description = "Orders, customers and payments for a retail business, modelled as bronze, silver and gold."
+catalog_pattern = "retail_{env}"
+environments = ["dev", "staging", "prod"]
+landing_volume = "raw"
+
+[[owners]]
+id = "sales-data"
+
+[[owners]]
+id = "finance-data"
+
+[[owners]]
+id = "customer-data"
+
+[[groups]]
+name = "lakehouse_analysts"
+role = "consumer"
+
+[[groups]]
+name = "lakehouse_data_scientists"
+role = "consumer"
+
+[[groups]]
+name = "lakehouse_engineers"
+role = "engineer"
+
+[[groups]]
+name = "lakehouse_pii_readers"
+role = "privileged"
+
+[[groups]]
+name = "lakehouse_pipeline_runners"
+role = "runner"
+
+[[groups]]
+name = "lakehouse_admins"
+role = "admin"
+
+# Consumers read gold only.
+[[grants]]
+group = "lakehouse_analysts"
+schema = "gold"
+privileges = ["SELECT"]
+envs = ["dev", "staging", "prod"]
+
+[[grants]]
+group = "lakehouse_data_scientists"
+schema = "gold"
+privileges = ["SELECT"]
+envs = ["dev", "staging", "prod"]
+
+# Engineers can read every layer outside production and silver and gold inside it.
+[[grants]]
+group = "lakehouse_engineers"
+schema = "bronze"
+privileges = ["SELECT"]
+envs = ["dev", "staging"]
+
+[[grants]]
+group = "lakehouse_engineers"
+schema = "silver"
+privileges = ["SELECT"]
+envs = ["dev", "staging", "prod"]
+
+[[grants]]
+group = "lakehouse_engineers"
+schema = "gold"
+privileges = ["SELECT"]
+envs = ["dev", "staging", "prod"]
+
+# Members of the privileged group see unmasked values, so they get the curated layers only.
+[[grants]]
+group = "lakehouse_pii_readers"
+schema = "silver"
+privileges = ["SELECT"]
+envs = ["dev", "staging", "prod"]
+
+[[grants]]
+group = "lakehouse_pii_readers"
+schema = "gold"
+privileges = ["SELECT"]
+envs = ["dev", "staging", "prod"]
+
+# The pipeline's run-as identity builds and owns the tables.
+[[grants]]
+group = "lakehouse_pipeline_runners"
+schema = "landing"
+privileges = ["READ VOLUME", "WRITE VOLUME"]
+envs = ["dev", "staging", "prod"]
+
+[[grants]]
+group = "lakehouse_pipeline_runners"
+schema = "bronze"
+privileges = ["ALL PRIVILEGES"]
+envs = ["dev", "staging", "prod"]
+
+[[grants]]
+group = "lakehouse_pipeline_runners"
+schema = "silver"
+privileges = ["ALL PRIVILEGES"]
+envs = ["dev", "staging", "prod"]
+
+[[grants]]
+group = "lakehouse_pipeline_runners"
+schema = "gold"
+privileges = ["ALL PRIVILEGES"]
+envs = ["dev", "staging", "prod"]
+
+[[grants]]
+group = "lakehouse_pipeline_runners"
+schema = "governance"
+privileges = ["EXECUTE"]
+envs = ["dev", "staging", "prod"]

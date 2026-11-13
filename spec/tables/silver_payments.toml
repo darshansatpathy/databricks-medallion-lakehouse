@@ -1,0 +1,103 @@
+[table]
+name = "payments"
+layer = "silver"
+from = "bronze.payments"
+owner = "finance-data"
+domain = "finance"
+classification = "internal"
+comment = "Current state of each payment: typed, validated and deduplicated by key. Bad rows go to the quarantine table."
+
+[cdc]
+keys = ["payment_id"]
+sequence_by = "updated_at"
+scd = 1
+delete_when = "op = 'D'"
+drop_columns = ["op"]
+
+[[columns]]
+name = "payment_id"
+type = "string"
+expr = "trim(payment_id)"
+comment = "Payment identifier"
+
+[[columns]]
+name = "order_id"
+type = "string"
+expr = "trim(order_id)"
+comment = "Order the payment settles"
+
+[[columns]]
+name = "amount"
+type = "decimal(18,2)"
+expr = "trim(amount)"
+comment = "Payment amount"
+
+[[columns]]
+name = "currency"
+type = "string"
+expr = "upper(trim(currency))"
+comment = "ISO currency code, upper case"
+
+[[columns]]
+name = "method"
+type = "string"
+expr = "lower(trim(method))"
+comment = "Payment method, lower case"
+
+[[columns]]
+name = "paid_at"
+type = "timestamp"
+expr = "trim(paid_at)"
+comment = "When the payment settled (UTC)"
+
+[[columns]]
+name = "updated_at"
+type = "timestamp"
+expr = "trim(updated_at)"
+comment = "Sequence column: when the source row last changed (UTC)"
+
+[[columns]]
+name = "op"
+type = "string"
+expr = "upper(trim(op))"
+comment = "Change operation, used for deletes only"
+
+[[expectations]]
+name = "payment_id_present"
+rule = "payment_id IS NOT NULL AND length(payment_id) > 0"
+action = "drop"
+
+[[expectations]]
+name = "order_id_present"
+rule = "order_id IS NOT NULL AND length(order_id) > 0"
+action = "drop"
+
+[[expectations]]
+name = "amount_positive"
+rule = "amount IS NOT NULL AND amount > 0"
+action = "drop"
+
+[[expectations]]
+name = "paid_at_valid"
+rule = "paid_at IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "updated_at_valid"
+rule = "updated_at IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "method_known"
+rule = "method IN ('card', 'bank_transfer', 'wallet')"
+action = "warn"
+
+[[expectations]]
+name = "op_present"
+rule = "op IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "op_known"
+rule = "op IS NULL OR op IN ('I', 'U', 'D')"
+action = "fail"

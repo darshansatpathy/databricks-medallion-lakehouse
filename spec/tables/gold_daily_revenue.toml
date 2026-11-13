@@ -1,0 +1,50 @@
+[table]
+name = "daily_revenue"
+layer = "gold"
+owner = "sales-data"
+domain = "sales"
+classification = "internal"
+comment = "Completed-order revenue by day and customer country, for finance and sales reporting."
+
+[query]
+from = "silver.orders"
+alias = "o"
+where = "o.status = 'completed'"
+
+[[query.joins]]
+table = "silver.customers"
+alias = "c"
+kind = "left"
+on = "o.customer_id = c.customer_id AND c.__END_AT IS NULL"
+
+[[columns]]
+name = "order_date"
+type = "date"
+expr = "to_date(o.order_ts)"
+group = true
+comment = "Day the order was placed (UTC)"
+
+[[columns]]
+name = "country"
+type = "string"
+expr = "coalesce(c.country, 'ZZ')"
+group = true
+comment = "Customer country; ZZ when the customer is unknown"
+
+[[columns]]
+name = "orders_count"
+type = "bigint"
+expr = "count(*)"
+comment = "Completed orders"
+
+[[columns]]
+name = "revenue"
+type = "decimal(18,2)"
+expr = "sum(o.amount)"
+comment = "Sum of order totals"
+
+[[columns]]
+name = "avg_order_value"
+type = "decimal(18,2)"
+expr = "round(avg(o.amount), 2)"
+comment = "Average order total"

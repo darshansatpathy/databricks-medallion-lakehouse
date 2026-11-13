@@ -1,0 +1,4 @@
+{"order_id": "O1001", "customer_id": "C001", "status": "completed", "amount": "120.50", "currency": "gbp", "order_ts": "2026-02-01T10:00:00Z", "updated_at": "2026-02-01T10:00:00Z", "op": "I"}
+{"order_id": "O1002", "customer_id": "C002", "status": "new", "amount": "80.00", "currency": "usd", "order_ts": "2026-02-02T11:00:00Z", "updated_at": "2026-02-02T11:00:00Z", "op": "I"}
+{"order_id": "O1003", "customer_id": "C001", "status": "completed", "amount": "45.25", "currency": "gbp", "order_ts": "2026-02-03T09:00:00Z", "updated_at": "2026-02-03T09:00:00Z", "op": "I"}
+{"order_id": "O1004", "customer_id": "C003", "status": "completed", "amount": "300.00", "currency": "eur", "order_ts": "2026-02-03T15:30:00+01:00", "updated_at": "2026-02-03T15:30:00+01:00", "op": "I"}

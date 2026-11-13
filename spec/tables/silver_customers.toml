@@ -1,0 +1,86 @@
+[table]
+name = "customers"
+layer = "silver"
+from = "bronze.customers"
+owner = "customer-data"
+domain = "customer"
+classification = "confidential"
+comment = "Customer history as a type 2 dimension: one row per version, with the open version marked by a null end. Contains personal data."
+
+[cdc]
+keys = ["customer_id"]
+sequence_by = "updated_at"
+scd = 2
+delete_when = "op = 'D'"
+drop_columns = ["op"]
+
+[[columns]]
+name = "customer_id"
+type = "string"
+expr = "trim(customer_id)"
+comment = "Customer identifier"
+
+[[columns]]
+name = "email"
+type = "string"
+expr = "lower(trim(email))"
+comment = "Customer email address, lower case"
+pii = true
+mask = "email"
+
+[[columns]]
+name = "full_name"
+type = "string"
+expr = "trim(full_name)"
+comment = "Customer full name"
+pii = true
+mask = "redact"
+
+[[columns]]
+name = "country"
+type = "string"
+expr = "upper(trim(country))"
+comment = "Country code, upper case"
+
+[[columns]]
+name = "segment"
+type = "string"
+expr = "lower(trim(segment))"
+comment = "Marketing segment, lower case"
+
+[[columns]]
+name = "updated_at"
+type = "timestamp"
+expr = "trim(updated_at)"
+comment = "Sequence column: when the source row last changed (UTC)"
+
+[[columns]]
+name = "op"
+type = "string"
+expr = "upper(trim(op))"
+comment = "Change operation, used for deletes only"
+
+[[expectations]]
+name = "customer_id_present"
+rule = "customer_id IS NOT NULL AND length(customer_id) > 0"
+action = "drop"
+
+[[expectations]]
+name = "updated_at_valid"
+rule = "updated_at IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "country_is_iso_length"
+rule = "country IS NULL OR length(country) = 2"
+action = "warn"
+
+[[expectations]]
+name = "op_present"
+rule = "op IS NOT NULL"
+action = "drop"
+
+[[expectations]]
+name = "op_known"
+rule = "op IS NULL OR op IN ('I', 'U', 'D')"
+action = "fail"
