@@ -10,6 +10,9 @@ documentation. A policy linter fails the build when a table breaks the rules, an
 builds the whole lakehouse from sample data so the *meaning* of the specification is tested, not only its
 text.
 
+> Reference implementation built on synthetic or public data. It distils patterns from production
+> work into code you can run and read; it is not a client system.
+
 ```mermaid
 flowchart LR
   src_orders[("landing/orders")] --> b_orders["bronze.orders"]
