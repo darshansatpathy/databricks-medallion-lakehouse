@@ -219,6 +219,7 @@ against a workspace using workload identity federation rather than a stored toke
   are examples. The sample data is invented.
 - **Masks do not protect Delta Sharing recipients**; do not share these tables directly.
 - Mermaid diagrams are rendered by GitHub; they were not rendered during development.
+- Written and tested by an AI assistant (Claude) working with the repository owner; the design has not had an independent review.
 
 ## Related repositories
 
